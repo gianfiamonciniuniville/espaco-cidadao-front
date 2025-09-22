@@ -1,13 +1,15 @@
+import { useNavigate } from "react-router";
 import styled from "styled-components";
+import { LogoWrapper } from "../components/LogoWrapper";
+
 
 export const Home = () => {
+  const navigate = useNavigate();
+
     return (
       <Container>
       <Card>
-        <LogoWrapper>
-          <LogoImage src="/logo.png" alt="Espaço Cidadão" />
-          <LogoText>Espaço Cidadão</LogoText>
-        </LogoWrapper>
+        <LogoWrapper />
 
         <Title>Bem-vindo ao Espaço Cidadão</Title>
 
@@ -16,7 +18,7 @@ export const Home = () => {
           espaços públicos
         </Description>
 
-        <Button onClick={() => console.log("Começar clicado")}>Começar</Button>
+        <Button onClick={() => navigate('/login')}>Começar</Button>
       </Card>
     </Container>
     )
@@ -39,24 +41,6 @@ const Card = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-`;
-
-const LogoWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const LogoImage = styled.img`
-  width: 50px;
-  height: 50px;
-`;
-
-const LogoText = styled.h1`
-  font-size: 20px;
-  font-weight: bold;
-  color: #004b5f;
-  margin: 0;
 `;
 
 const Title = styled.h2`

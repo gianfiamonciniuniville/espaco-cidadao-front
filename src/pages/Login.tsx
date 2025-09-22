@@ -3,74 +3,30 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { LogoWrapper } from '../components/LogoWrapper';
 
-export const Cadastro  = () => {
+export const Login = () => {
   const navigate = useNavigate();
-  const [nome, setNome] = useState('');
-  const [sobrenome, setSobrenome] = useState('');
-  const [cpf, setCpf] = useState('');
-  const [telefone, setTelefone] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ nome, sobrenome, cpf, telefone, email, senha });
-    navigate('/login');
+    console.log({ email, senha });
+    navigate('/mapa');
   };
 
   return (
     <Wrapper>
       <Card>
         <LogoWrapper />
-        <Title>Cadastro</Title>
+        <Title>Login</Title>
         <Form onSubmit={handleSubmit}>
-          <Label>
-            Nome
-            <Input
-              type="text"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              placeholder="Nome"
-              required
-            />
-          </Label>
-          <Label>
-            Sobrenome
-            <Input
-              type="text"
-              value={sobrenome}
-              onChange={(e) => setSobrenome(e.target.value)}
-              placeholder="Sobrenome"
-              required
-            />
-          </Label>
-          <Label>
-            CPF
-            <Input
-              type="text"
-              value={cpf}
-              onChange={(e) => setCpf(e.target.value)}
-              placeholder="000.000.000-00"
-              required
-            />
-          </Label>
-          <Label>
-            Telefone
-            <Input
-              type="tel"
-              value={telefone}
-              onChange={(e) => setTelefone(e.target.value)}
-              placeholder="(DDD) Telefone"
-              required
-            />
-          </Label>
           <Label>
             Email
             <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
+              placeholder="Digite seu email"
               required
             />
           </Label>
@@ -80,22 +36,24 @@ export const Cadastro  = () => {
               type="password"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
-              placeholder="Senha"
+              placeholder="Digite sua senha"
               required
             />
           </Label>
-          <SubmitButton type="submit">Cadastrar</SubmitButton>
+          <SubmitButton type="submit">Entrar</SubmitButton>
         </Form>
         <Footer>
-          Já tem uma conta?{' '}
-          <LinkButton type="button" onClick={() => navigate('/login')}>
-            Fazer Login
+          Não tem uma conta?{' '}
+          <LinkButton type="button" onClick={() => navigate('/cadastro')}>
+            Criar Conta
           </LinkButton>
         </Footer>
       </Card>
     </Wrapper>
   );
 };
+
+export default Login;
 
 const Wrapper = styled.div`
   --bg: #f3f3f3;
@@ -110,7 +68,7 @@ const Wrapper = styled.div`
 const Card = styled.div`
   background-color: #ffffff;
   width: 100%;
-  max-width: 420px;
+  max-width: 380px;
   padding: 32px 20px;
   border-radius: 12px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
@@ -118,13 +76,6 @@ const Card = styled.div`
   flex-direction: column;
   align-items: stretch;
   gap: 20px;
-`;
-
-const LogoText = styled.h1`
-  font-size: 22px;
-  font-weight: 800;
-  color: #004b5f;
-  margin: 0;
 `;
 
 const Title = styled.h2`
