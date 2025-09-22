@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../index.css';  // A importação continua igual, pois estamos usando o mesmo arquivo CSS
 import { LogoWrapper } from '../components/LogoWrapper';
+import { useActionData, useNavigate } from 'react-router';
 
 interface FormData {
   titulo: string;
@@ -10,6 +11,7 @@ interface FormData {
 }
 
 export const EdicaoRelato: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     titulo: 'N/D',
     descricao: 'N/D',
@@ -31,10 +33,9 @@ export const EdicaoRelato: React.FC = () => {
     // Aqui você pode enviar o formulário para API ou o que desejar
   };
 
+  
   const handleVoltar = () => {
-    // Exemplo: usar react-router-dom para navegar para trás
-    // navigate(-1);
-    console.log('Voltar clicado');
+    navigate(-1);
   };
 
   return (

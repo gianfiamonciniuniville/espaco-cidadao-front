@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../index.css';
 import { LogoWrapper } from '../components/LogoWrapper';
+import { useNavigate } from 'react-router';
 
 interface FormData {
   titulo: string;
@@ -10,6 +11,7 @@ interface FormData {
 }
 
 export const CadastroRelato: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     titulo: '',
     descricao: '',
@@ -41,7 +43,7 @@ export const CadastroRelato: React.FC = () => {
   };
 
   const handleVoltar = () => {
-    console.log('Voltar clicado');
+    navigate(-1);
   };
 
   return (

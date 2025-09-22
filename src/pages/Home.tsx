@@ -18,7 +18,10 @@ export const Home = () => {
           espaços públicos
         </Description>
 
-        <Button onClick={() => navigate('/login')}>Começar</Button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <Button onClick={() => navigate('/cadastro-relato')}>Começar a postar</Button>
+          <Button onClick={() => navigate('/login')}>Log-in</Button>
+        </div>
       </Card>
     </Container>
     )
