@@ -1,27 +1,53 @@
 import { useNavigate } from "react-router-dom";
 import { LogoWrapper } from "../components/LogoWrapper";
 import styled from "styled-components";
+import { LinkButton } from "../components/global-styled";
 
 export const ListaMeusRelatos = () => {
 	const navigate = useNavigate();
 	const demandas = [
-		{ titulo: "Semáforo queimado", status: "Em Aberto", data: "20/10/2025" },
-		{ titulo: "Iluminação na Rua A", status: "Fechado", data: "21/10/2025" },
 		{
+			id: 1,
+			titulo: "Semáforo queimado",
+			status: "Em Aberto",
+			data: "20/10/2025",
+		},
+		{
+			id: 2,
+			titulo: "Iluminação na Rua A",
+			status: "Fechado",
+			data: "21/10/2025",
+		},
+		{
+			id: 3,
 			titulo: "Buraco na rodovia",
 			status: "Andamento",
 			data: "20/10/2025",
 		},
-		{ titulo: "Placa de trânsito caiu", status: "Fechado", data: "20/10/2025" },
+		{
+			id: 4,
+			titulo: "Placa de trânsito caiu",
+			status: "Fechado",
+			data: "20/10/2025",
+		},
 	];
 
-	const handleEdit = () => {
-		navigate("/edicao-relato");
+	const handleEdit = (id: number) => {
+		navigate(`/edicao-relato/${id}`);
+	};
+
+	const handleOpen = (id: number) => {
+		navigate(`/relato/${id}`);
 	};
 
 	return (
 		<Container>
 			<LogoWrapper />
+			<LinkButton
+				onClick={() => navigate("/mapa")}
+				style={{ margin: "16px 0" }}>
+				← Voltar
+			</LinkButton>
 			<h2>Meus Relatos</h2>
 			<StatusButtons>
 				<StatusButton variant="open">Em Aberto</StatusButton>
@@ -40,11 +66,11 @@ export const ListaMeusRelatos = () => {
 						</tr>
 					</thead>
 					<tbody>
-						{demandas.map((d, i) => (
-							<tr key={i}>
-								<td>
-									<StyledText>{d.titulo}</StyledText>
-								</td>
+						{demandas.map((d) => (
+							<tr key={d.id}>
+								<TitleReport onClick={() => handleOpen(d.id)}>
+									{d.titulo}
+								</TitleReport>
 								<td>
 									<StatusLabel variant={getStatusVariant(d.status)}>
 										{d.status}
@@ -52,7 +78,9 @@ export const ListaMeusRelatos = () => {
 								</td>
 								<td>{d.data}</td>
 								<td>
-									<EditButton onClick={handleEdit}>Editar</EditButton>
+									<EditButton onClick={() => handleEdit(d.id)}>
+										Editar
+									</EditButton>
 								</td>
 							</tr>
 						))}
@@ -75,6 +103,11 @@ const StatusButtons = styled.div`
 	display: flex;
 	justify-content: space-around;
 	margin: 10px 0;
+`;
+
+const TitleReport = styled.td`
+	text-decoration: underline;
+	color: #333;
 `;
 
 const StatusButton = styled.button<{ variant: "open" | "closed" | "progress" }>`
@@ -129,9 +162,9 @@ const EditButton = styled.button`
 	padding: 5px 10px;
 	border-radius: 5px;
 	cursor: pointer;
+	z-index: 1;
+	position: relative;
 `;
-
-const StyledText = styled.span``;
 
 const getStatusVariant = (status: string) => {
 	if (status === "Em Aberto") return "open";

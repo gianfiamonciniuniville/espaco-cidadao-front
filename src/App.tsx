@@ -17,10 +17,10 @@ function App() {
 			<Route path="/login" element={<Login />} />
 			<Route path="/mapa" element={<Mapa />} />
 			<Route path="/cadastro-relato" element={<CadastroRelato />} />
-			<Route path="/edicao-relato" element={<EdicaoRelato />} />
-			<Route path="/relato" element={<Relato />} />
+			<Route path="/edicao-relato/:id" element={<EdicaoRelato />} />
+			<Route path="/relato/:id" element={<Relato />} />
 			<Route path="/relatos" element={<ListaRelatos />} />
-			<Route path="/my-relatos" element={<ListaMeusRelatos />} />
+			<Route path="/meus-relatos" element={<ListaMeusRelatos />} />
 		</Routes>
 	);
 }

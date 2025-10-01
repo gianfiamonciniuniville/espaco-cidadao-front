@@ -1,46 +1,91 @@
 import styled from "styled-components";
 import { LogoWrapper } from "../components/LogoWrapper";
+import { useNavigate, useParams } from "react-router-dom";
+import { LinkButton, Title } from "../components/global-styled";
+
+const demandas = [
+	{
+		id: 1,
+		titulo: "Semáforo queimado",
+		status: "Em Aberto",
+		data: "20/10/2025",
+		descricao: "O semáforo da Rua Principal está queimado.",
+		localizacao: "Rua Principal, 123",
+		foto: "https://picsum.photos/id/1015/400/250",
+	},
+	{
+		id: 2,
+		titulo: "Iluminação na Rua A",
+		status: "Fechado",
+		data: "21/10/2025",
+		descricao: "A iluminação da Rua A está precária.",
+		localizacao: "Rua A, 456",
+		foto: "https://picsum.photos/id/1031/400/250",
+	},
+	{
+		id: 3,
+		titulo: "Buraco na rodovia",
+		status: "Em Atendimento",
+		data: "20/10/2025",
+		descricao: "Há um buraco perigoso na rodovia.",
+		localizacao: "Rodovia XYZ, km 10",
+		foto: "https://picsum.photos/id/1048/400/250",
+	},
+	{
+		id: 4,
+		titulo: "Placa de trânsito caiu",
+		status: "Fechado",
+		data: "20/10/2025",
+		descricao: "A placa de 'Pare' da esquina da Rua B com a Rua C caiu.",
+		localizacao: "Esquina da Rua B com a Rua C",
+		foto: "https://picsum.photos/id/1059/400/250",
+	},
+];
 
 export const Relato = () => {
+	const { id } = useParams<{ id: string }>();
+	const navigate = useNavigate();
+	const relato = demandas.find((d) => d.id === Number(id));
+
+	if (!relato) {
+		return <div>Relato não encontrado</div>;
+	}
+
 	return (
 		<Container>
 			<LogoWrapper />
 
-			<Back>← Voltar</Back>
+			<Title>Detalhes do Relato {relato.id}</Title>
+			<LinkButton onClick={() => navigate(-1)} style={{ margin: "16px 0" }}>
+				← Voltar
+			</LinkButton>
 
 			<Card>
+				<img
+					src={relato.foto}
+					alt={relato.titulo}
+					style={{ width: "100%", borderRadius: "8px" }}
+				/>
 				<h3>
-					Demanda <span style={{ float: "right" }}>20/10/2025</span>
+					Demanda <span style={{ float: "right" }}>{relato.data}</span>
 				</h3>
 				<p>
-					<strong>Semáforo queimado</strong>
+					<strong>{relato.titulo}</strong>
 				</p>
-				<p>"descrição do problema"</p>
-				<SignalImg
-					src="https://cdn-icons-png.flaticon.com/512/483/483947.png"
-					alt="Semáforo"
-				/>
+				<p>"{relato.descricao}"</p>
 			</Card>
 
 			<Card>
 				<h3>Localização</h3>
-				<p>"Rua do lado de outra rua"</p>
-				<MapImg
-					src="https://via.placeholder.com/300x100.png?text=Mapa"
+				<p>"{relato.localizacao}"</p>
+				<img
+					src={`https://via.placeholder.com/400x200.png?text=Mapa+de+${relato.localizacao}`}
 					alt="Mapa"
+					style={{ width: "100%", borderRadius: "8px" }}
 				/>
 			</Card>
 
-			<Actions>
-				<Button variant="approve" className="btn-approve">
-					Aprovar
-				</Button>
-				<Button variant="reject" className="btn-reject">
-					Rejeitar
-				</Button>
-			</Actions>
-
-			<StyledTextarea rows={3} placeholder="Escreva sua devolutiva..." />
+			<StyledTextarea rows={3} placeholder="Comente..." />
 		</Container>
 	);
 };
@@ -51,13 +96,6 @@ const Container = styled.div`
 	border-radius: 10px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	padding: 15px;
-`;
-
-const Back = styled.div`
-	margin: 5px 0;
-	font-size: 0.9em;
-	color: #2f5d8a;
-	cursor: pointer;
 `;
 
 const Card = styled.div`
@@ -76,34 +114,6 @@ const Card = styled.div`
 		font-size: 0.85em;
 		color: #555;
 	}
-`;
-
-const SignalImg = styled.img`
-	width: 40px;
-	float: right;
-`;
-
-const MapImg = styled.img`
-	width: 100%;
-	border-radius: 6px;
-	margin-top: 6px;
-`;
-
-const Actions = styled.div`
-	display: flex;
-	justify-content: space-around;
-	margin: 10px 0;
-`;
-
-const Button = styled.button<{ variant: "approve" | "reject" }>`
-	border: none;
-	padding: 6px 10px;
-	border-radius: 20px;
-	font-size: 0.8em;
-	cursor: pointer;
-	color: #fff;
-	background: ${({ variant }) =>
-		variant === "approve" ? "#3bb273" : "#c94c4c"};
 `;
 
 const StyledTextarea = styled.textarea`

@@ -31,7 +31,7 @@ export const Mapa = () => {
 					<Button variant="filled" onClick={() => navigate("/relatos")}>
 						Relatos da Cidade
 					</Button>
-					<Button variant="outline" onClick={() => navigate("/my-relatos")}>
+					<Button variant="outline" onClick={() => navigate("/meus-relatos")}>
 						Meus Relatos
 					</Button>
 					<Button variant="filled" onClick={() => navigate("/cadastro-relato")}>
