@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import '../index.css';  // A importação continua igual, pois estamos usando o mesmo arquivo CSS
+import '../index.css'; 
 import { LogoWrapper } from '../components/LogoWrapper';
-import { useActionData, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 
 interface FormData {
   titulo: string;
@@ -30,7 +30,6 @@ export const EdicaoRelato: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Salvando relato:', formData);
-    // Aqui você pode enviar o formulário para API ou o que desejar
   };
 
   

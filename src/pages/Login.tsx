@@ -133,7 +133,7 @@ const Footer = styled.div`
   color: #4b5563;
 `;
 
-const LinkButton = styled.button`
+export const LinkButton = styled.button`
   background: none;
   border: none;
   color: #009169;

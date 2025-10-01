@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { LogoWrapper } from '../components/LogoWrapper';
+import * as GlobalStyles from '../components/global-styled'
 
 export const Cadastro  = () => {
   const navigate = useNavigate();
@@ -19,10 +20,10 @@ export const Cadastro  = () => {
   };
 
   return (
-    <Wrapper>
-      <Card>
+    <GlobalStyles.Container>
+      <GlobalStyles.Card>
         <LogoWrapper />
-        <Title>Cadastro</Title>
+        <GlobalStyles.Title>Cadastro</GlobalStyles.Title>
         <Form onSubmit={handleSubmit}>
           <Label>
             Nome
@@ -92,48 +93,10 @@ export const Cadastro  = () => {
             Fazer Login
           </LinkButton>
         </Footer>
-      </Card>
-    </Wrapper>
+      </GlobalStyles.Card>
+    </GlobalStyles.Container>
   );
 };
-
-const Wrapper = styled.div`
-  --bg: #f3f3f3;
-  background-color: var(--bg);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 24px;
-`;
-
-const Card = styled.div`
-  background-color: #ffffff;
-  width: 100%;
-  max-width: 420px;
-  padding: 32px 20px;
-  border-radius: 12px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 20px;
-`;
-
-const LogoText = styled.h1`
-  font-size: 22px;
-  font-weight: 800;
-  color: #004b5f;
-  margin: 0;
-`;
-
-const Title = styled.h2`
-  font-size: 20px;
-  font-weight: 700;
-  color: #1f2937;
-  margin: 0;
-  text-align: center;
-`;
 
 const Form = styled.form`
   display: flex;
