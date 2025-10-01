@@ -1,0 +1,52 @@
+name: React TypeScript CI
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to 'main' branch
+  pull_request:
+    branches:
+      - main  # Trigger on PRs targeting 'main' branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # You can set your preferred Node.js version here
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          npm install
+
+      # Step 4: Run TypeScript type check (optional)
+      - name: Run TypeScript type check
+        run: |
+          npx tsc --noEmit  # Check for TypeScript type errors
+
+      # Step 5: Run linting (optional)
+      - name: Run ESLint
+        run: |
+          npm run lint  # Make sure you have an ESLint script in package.json
+
+      # Step 6: Run tests (optional)
+      - name: Run tests
+        run: |
+          npm run test -- --ci --reporters=dot  # Assumes you have tests configured
+
+      # Step 7: Build the app (optional, if you're building the app for production)
+      - name: Build app
+        run: |
+          npm run build  # This step is optional, depending on your workflow
+
+      # Step 8: Deploy (optional)
+      # Add deployment steps here if needed, such as deploying to Netlify, Vercel, or any other service
