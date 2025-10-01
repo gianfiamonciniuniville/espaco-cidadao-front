@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const LogoWrapper = () => {
     return (
         <LogoWrap>
-          <LogoImage src="/src/assets/logo.png" alt="Espaço Cidadão" />
+          <LogoImage src="https://raw.githubusercontent.com/gianfiamonciniuniville/espaco-cidadao-front/refs/heads/master/src/assets/logo.png" alt="Espaço Cidadão" />
         </LogoWrap>
     );
 }
