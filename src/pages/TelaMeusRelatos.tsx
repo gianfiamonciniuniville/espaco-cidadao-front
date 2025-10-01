@@ -63,7 +63,7 @@ export const MeusRelatos: React.FC = () => {
           <div key={relato.id} className="relato-card">
             <h4 className="relato-titulo">{relato.titulo}</h4>
             <p className="relato-descricao">{relato.descricao}</p>
-            <div className={status-badge status-${relato.status}}>
+            <div className={`status-badge status-${relato.status}`}>
               {statusLabels[relato.status]}
             </div>
           </div>

@@ -85,13 +85,13 @@ export const Cadastro  = () => {
               required
             />
           </Label>
-          <SubmitButton type="submit">Cadastrar</SubmitButton>
+          <GlobalStyles.Button type="submit" variant='filled'>Cadastrar</GlobalStyles.Button>
         </Form>
         <Footer>
           Já tem uma conta?{' '}
-          <LinkButton type="button" onClick={() => navigate('/login')}>
+          <GlobalStyles.LinkButton type="button" onClick={() => navigate('/login')}>
             Fazer Login
-          </LinkButton>
+          </GlobalStyles.LinkButton>
         </Footer>
       </GlobalStyles.Card>
     </GlobalStyles.Container>
@@ -124,36 +124,9 @@ const Input = styled.input`
   }
 `;
 
-const SubmitButton = styled.button`
-  background-color: #009169;
-  color: white;
-  font-size: 16px;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.2s ease;
-  &:hover {
-    background-color: #007a58;
-  }
-`;
 
 const Footer = styled.div`
   font-size: 14px;
   text-align: center;
   color: #4b5563;
-`;
-
-const LinkButton = styled.button`
-  background: none;
-  border: none;
-  color: #009169;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0;
-  margin-left: 4px;
-  &:hover {
-    text-decoration: underline;
-  }
 `;

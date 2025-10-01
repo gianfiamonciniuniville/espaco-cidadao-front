@@ -67,7 +67,7 @@ export const VisualizacaoRelato: React.FC = () => {
       <div className="relato-container">
         {/* Status e botão editar */}
         <div className="status-container">
-          <span className={status-badge status-${status}}>{statusLabels[status]}</span>
+          <span className={`status-badge status-${status}`}>{statusLabels[status]}</span>
           <button type="button" className="editar-button" onClick={handleEditarStatus}>
             Editar Status
           </button>
