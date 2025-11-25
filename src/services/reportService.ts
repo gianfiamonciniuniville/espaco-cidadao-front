@@ -10,6 +10,7 @@ export const createReport = async (
 	reportData: CreateReportDto
 ): Promise<Report> => {
 	const formData = new FormData();
+	formData.append("UserId", reportData.UserId.toString());
 	formData.append("Title", reportData.Title);
 	formData.append("Description", reportData.Description);
 	formData.append("Localization", reportData.Localization);

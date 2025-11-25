@@ -3,20 +3,25 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { LogoWrapper } from '../components/LogoWrapper';
 import * as GlobalStyles from '../components/global-styled'
+import { useUserStore } from '../stores/userStore';
 
 export const Cadastro  = () => {
   const navigate = useNavigate();
-  const [nome, setNome] = useState('');
-  const [sobrenome, setSobrenome] = useState('');
-  const [cpf, setCpf] = useState('');
-  const [telefone, setTelefone] = useState('');
+  const { registerUser, loading, error } = useUserStore();
+  const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [document, setDocument] = useState('');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ nome, sobrenome, cpf, telefone, email, senha });
-    navigate('/login');
+    await registerUser({ username, firstName, lastName, document, phone, email, password });
+    if (!error) {
+      navigate('/login');
+    }
   };
 
   return (
@@ -26,11 +31,21 @@ export const Cadastro  = () => {
         <GlobalStyles.Title>Cadastro</GlobalStyles.Title>
         <Form onSubmit={handleSubmit}>
           <Label>
+            Username
+            <Input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+              required
+            />
+          </Label>
+          <Label>
             Nome
             <Input
               type="text"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
               placeholder="Nome"
               required
             />
@@ -39,8 +54,8 @@ export const Cadastro  = () => {
             Sobrenome
             <Input
               type="text"
-              value={sobrenome}
-              onChange={(e) => setSobrenome(e.target.value)}
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
               placeholder="Sobrenome"
               required
             />
@@ -49,8 +64,8 @@ export const Cadastro  = () => {
             CPF
             <Input
               type="text"
-              value={cpf}
-              onChange={(e) => setCpf(e.target.value)}
+              value={document}
+              onChange={(e) => setDocument(e.target.value)}
               placeholder="000.000.000-00"
               required
             />
@@ -59,8 +74,8 @@ export const Cadastro  = () => {
             Telefone
             <Input
               type="tel"
-              value={telefone}
-              onChange={(e) => setTelefone(e.target.value)}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               placeholder="(DDD) Telefone"
               required
             />
@@ -79,13 +94,16 @@ export const Cadastro  = () => {
             Senha
             <Input
               type="password"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Senha"
               required
             />
           </Label>
-          <GlobalStyles.Button type="submit" variant='filled'>Cadastrar</GlobalStyles.Button>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          <GlobalStyles.Button type="submit" variant='filled' disabled={loading}>
+            {loading ? 'Cadastrando...' : 'Cadastrar'}
+          </GlobalStyles.Button>
         </Form>
         <Footer>
           Já tem uma conta?{' '}
@@ -129,4 +147,10 @@ const Footer = styled.div`
   font-size: 14px;
   text-align: center;
   color: #4b5563;
+`;
+
+const ErrorMessage = styled.p`
+  color: red;
+  font-size: 14px;
+  text-align: center;
 `;

@@ -3,44 +3,45 @@ import { LogoWrapper } from "../components/LogoWrapper";
 import { useNavigate } from "react-router";
 import * as GlobalStyles from "../components/global-styled";
 import styled from "styled-components";
-
-interface FormData {
-	titulo: string;
-	descricao: string;
-	foto: File | null;
-	endereco: string;
-}
+import { useReportStore } from "../stores/reportStore";
+import type { CreateReportDto } from "../types/report";
 
 export const CadastroRelato: React.FC = () => {
 	const navigate = useNavigate();
-	const [formData, setFormData] = useState<FormData>({
-		titulo: "",
-		descricao: "",
-		foto: null,
-		endereco: "",
+	const { createReport, loading, error } = useReportStore();
+	const [formData, setFormData] = useState<CreateReportDto>({
+		UserId: Number(localStorage.getItem("userId")) || 0,
+		Title: "",
+		Description: "",
+		Localization: "",
+		Photos: [],
 	});
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value, files } = e.target;
-
+	const handleChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	) => {
+		const { name, value } = e.target;
 		setFormData((prev) => ({
 			...prev,
-			[name]: files ? files[0] : value,
+			[name]: value,
 		}));
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-
-		const data = new FormData();
-		data.append("titulo", formData.titulo);
-		data.append("descricao", formData.descricao);
-		data.append("endereco", formData.endereco);
-		if (formData.foto) {
-			data.append("foto", formData.foto);
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files) {
+			setFormData((prev) => ({
+				...prev,
+				Photos: e.target.files ? Array.from(e.target.files) : [],
+			}));
 		}
+	};
 
-		console.log("Enviando relato:", Object.fromEntries(data.entries()));
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		await createReport(formData);
+		if (!error) {
+			navigate("/meus-relatos");
+		}
 	};
 
 	return (
@@ -55,8 +56,8 @@ export const CadastroRelato: React.FC = () => {
 						Título
 						<Input
 							type="text"
-							name="titulo"
-							value={formData.titulo}
+							name="Title"
+							value={formData.Title}
 							onChange={handleChange}
 							placeholder="Digite o título do relato"
 							required
@@ -65,10 +66,9 @@ export const CadastroRelato: React.FC = () => {
 
 					<Label>
 						Descrição
-						<Input
-							type="text"
-							name="descricao"
-							value={formData.descricao}
+						<Textarea
+							name="Description"
+							value={formData.Description}
 							onChange={handleChange}
 							placeholder="Descreva seu relato"
 							required
@@ -76,12 +76,13 @@ export const CadastroRelato: React.FC = () => {
 					</Label>
 
 					<Label>
-						Foto
+						Fotos
 						<Input
 							type="file"
-							name="foto"
+							name="Photos"
 							accept="image/*"
-							onChange={handleChange}
+							multiple
+							onChange={handleFileChange}
 						/>
 					</Label>
 
@@ -89,21 +90,26 @@ export const CadastroRelato: React.FC = () => {
 						Localização
 						<Input
 							type="text"
-							name="endereco"
-							value={formData.endereco}
+							name="Localization"
+							value={formData.Localization}
 							onChange={handleChange}
 							placeholder="Digite onde foi relatado"
 							required
 						/>
 					</Label>
 
+					{error && <ErrorMessage>{error}</ErrorMessage>}
+
 					<GlobalStyles.Button
 						type="submit"
 						disabled={
-							!formData.titulo || !formData.descricao || !formData.endereco
+							!formData.Title ||
+							!formData.Description ||
+							!formData.Localization ||
+							loading
 						}
 						variant="filled">
-						Enviar
+						{loading ? "Enviando..." : "Enviar"}
 					</GlobalStyles.Button>
 				</Form>
 
@@ -143,8 +149,28 @@ const Input = styled.input`
 	}
 `;
 
+const Textarea = styled.textarea`
+	padding: 10px 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 8px;
+	font-size: 14px;
+	outline: none;
+	resize: vertical;
+	min-height: 80px;
+	&:focus {
+		border-color: #009169;
+		box-shadow: 0 0 0 2px rgba(0, 145, 105, 0.2);
+	}
+`;
+
 const Footer = styled.div`
 	font-size: 14px;
 	text-align: center;
 	color: #4b5563;
+`;
+
+const ErrorMessage = styled.p`
+	color: red;
+	font-size: 14px;
+	text-align: center;
 `;

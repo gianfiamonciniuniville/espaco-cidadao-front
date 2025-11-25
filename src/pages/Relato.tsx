@@ -2,84 +2,88 @@ import styled from "styled-components";
 import { LogoWrapper } from "../components/LogoWrapper";
 import { useNavigate, useParams } from "react-router-dom";
 import { LinkButton, Title } from "../components/global-styled";
+import { useReportStore } from "../stores/reportStore";
+import { useEffect } from "react";
+import { ReportStatus } from "../types/report";
 
-const demandas = [
-	{
-		id: 1,
-		titulo: "Semáforo queimado",
-		status: "Em Aberto",
-		data: "20/10/2025",
-		descricao: "O semáforo da Rua Principal está queimado.",
-		localizacao: "Rua Principal, 123",
-		foto: "https://picsum.photos/id/1015/400/250",
-	},
-	{
-		id: 2,
-		titulo: "Iluminação na Rua A",
-		status: "Fechado",
-		data: "21/10/2025",
-		descricao: "A iluminação da Rua A está precária.",
-		localizacao: "Rua A, 456",
-		foto: "https://picsum.photos/id/1031/400/250",
-	},
-	{
-		id: 3,
-		titulo: "Buraco na rodovia",
-		status: "Em Atendimento",
-		data: "20/10/2025",
-		descricao: "Há um buraco perigoso na rodovia.",
-		localizacao: "Rodovia XYZ, km 10",
-		foto: "https://picsum.photos/id/1048/400/250",
-	},
-	{
-		id: 4,
-		titulo: "Placa de trânsito caiu",
-		status: "Fechado",
-		data: "20/10/2025",
-		descricao: "A placa de 'Pare' da esquina da Rua B com a Rua C caiu.",
-		localizacao: "Esquina da Rua B com a Rua C",
-		foto: "https://picsum.photos/id/1059/400/250",
-	},
-];
+type StatusVariant = "open" | "closed" | "progress";
+
+const getStatusInfo = (
+	status: ReportStatus
+): { text: string; variant: StatusVariant } => {
+	switch (status) {
+		case ReportStatus.Pending:
+			return { text: "Em Aberto", variant: "open" };
+		case ReportStatus.Resolved:
+			return { text: "Fechado", variant: "closed" };
+		case ReportStatus.InProgress:
+			return { text: "Andamento", variant: "progress" };
+		default:
+			return { text: "Desconhecido", variant: "progress" };
+	}
+};
 
 export const Relato = () => {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
-	const relato = demandas.find((d) => d.id === Number(id));
+	const { report, getReportById, photos, getReportPhotos, loading, error } =
+		useReportStore();
 
-	if (!relato) {
+	useEffect(() => {
+		if (id) {
+			getReportById(Number(id));
+			getReportPhotos(Number(id));
+		}
+	}, [id, getReportById, getReportPhotos]);
+
+	if (loading) {
+		return <div>Carregando...</div>;
+	}
+
+	if (error) {
+		return <div>{error}</div>;
+	}
+
+	if (!report) {
 		return <div>Relato não encontrado</div>;
 	}
+
+	const statusInfo = getStatusInfo(report.status);
 
 	return (
 		<Container>
 			<LogoWrapper />
 
-			<Title>Detalhes do Relato {relato.id}</Title>
+			<Title>Detalhes do Relato {report.id}</Title>
 			<LinkButton onClick={() => navigate(-1)} style={{ margin: "16px 0" }}>
 				← Voltar
 			</LinkButton>
 
 			<Card>
-				<img
-					src={relato.foto}
-					alt={relato.titulo}
-					style={{ width: "100%", borderRadius: "8px" }}
-				/>
+				{photos.length > 0 && (
+					<img
+						src={photos[0].url}
+						alt={report.title}
+						style={{ width: "100%", borderRadius: "8px" }}
+					/>
+				)}
 				<h3>
-					Demanda <span style={{ float: "right" }}>{relato.data}</span>
+					Demanda{" "}
+					<StatusLabel variant={statusInfo.variant}>
+						{statusInfo.text}
+					</StatusLabel>
 				</h3>
 				<p>
-					<strong>{relato.titulo}</strong>
+					<strong>{report.title}</strong>
 				</p>
-				<p>"{relato.descricao}"</p>
+				<p>"{report.description}"</p>
 			</Card>
 
 			<Card>
 				<h3>Localização</h3>
-				<p>"{relato.localizacao}"</p>
+				<p>"{report.localization}"</p>
 				<img
-					src={`https://via.placeholder.com/400x200.png?text=Mapa+de+${relato.localizacao}`}
+					src={`https://via.placeholder.com/400x200.png?text=Mapa+de+${report.localization}`}
 					alt="Mapa"
 					style={{ width: "100%", borderRadius: "8px" }}
 				/>
@@ -108,6 +112,9 @@ const Card = styled.div`
 		margin: 0 0 5px;
 		font-size: 1em;
 		color: #333;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 	p {
 		margin: 4px 0;
@@ -122,4 +129,17 @@ const StyledTextarea = styled.textarea`
 	border-radius: 6px;
 	padding: 6px;
 	font-size: 0.85em;
+`;
+
+const StatusLabel = styled.span<{ variant: StatusVariant }>`
+	padding: 2px 8px;
+	border-radius: 12px;
+	color: white;
+	font-size: 0.75em;
+	background: ${({ variant }) =>
+		variant === "open"
+			? "#3bb273"
+			: variant === "closed"
+			? "#c94c4c"
+			: "#2f5d8a"};
 `;

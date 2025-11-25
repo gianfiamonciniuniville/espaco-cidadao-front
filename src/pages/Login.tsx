@@ -1,18 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { LogoWrapper } from "../components/LogoWrapper";
 import * as GlobalStyles from "../components/global-styled";
+import { useUserStore } from "../stores/userStore";
 
 export const Login = () => {
 	const navigate = useNavigate();
+	const { loginUser, token, loading, error } = useUserStore();
 	const [email, setEmail] = useState("");
-	const [senha, setSenha] = useState("");
+	const [password, setPassword] = useState("");
 
-	const handleSubmit = (e: React.FormEvent) => {
+	useEffect(() => {
+		if (token) {
+			navigate("/mapa");
+		}
+	}, [token, navigate]);
+
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log({ email, senha });
-		navigate("/mapa");
+		await loginUser({ email, password });
 	};
 
 	return (
@@ -35,14 +42,15 @@ export const Login = () => {
 						Senha
 						<Input
 							type="password"
-							value={senha}
-							onChange={(e) => setSenha(e.target.value)}
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
 							placeholder="Digite sua senha"
 							required
 						/>
 					</Label>
-					<GlobalStyles.Button type="submit" variant="filled">
-						Entrar
+					{error && <ErrorMessage>{error}</ErrorMessage>} 
+					<GlobalStyles.Button type="submit" variant="filled" disabled={loading}>
+						{loading ? "Entrando..." : "Entrar"}
 					</GlobalStyles.Button>
 				</Form>
 				<Footer>
@@ -90,4 +98,10 @@ const Footer = styled.div`
 	font-size: 14px;
 	text-align: center;
 	color: #4b5563;
+`;
+
+const ErrorMessage = styled.p`
+	color: red;
+	font-size: 14px;
+	text-align: center;
 `;

@@ -13,6 +13,7 @@ export interface UpdateReportDto {
 }
 
 export interface CreateReportDto {
+	UserId: number;
 	Title: string;
 	Description: string;
 	Localization: string;
@@ -27,6 +28,8 @@ export interface Report {
 	status: ReportStatus;
 	user: UserShortDto;
 	photosCount: number;
+	created: Date;
+	updated: Date;
 }
 
 export interface ReportPhoto {

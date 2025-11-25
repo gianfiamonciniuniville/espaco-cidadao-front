@@ -9,8 +9,8 @@ cd espaco-cidadao-front
 
 #### Comandos para rodar o projeto
 ```sh
-npm install
-npm run dev
+yarn install
+yarn dev
 ```
 
 #### Caso não tenha o npm ou node instalado

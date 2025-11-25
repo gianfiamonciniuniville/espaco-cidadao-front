@@ -2,35 +2,52 @@ import styled from "styled-components";
 import { LogoWrapper } from "../components/LogoWrapper";
 import { useNavigate } from "react-router-dom";
 import { LinkButton, Title } from "../components/global-styled";
+import { useReportStore } from "../stores/reportStore";
+import { useEffect, useState } from "react";
+import type { Report } from "../types/report";
+import { ReportStatus } from "../types/report";
+import { useLocation } from "../hooks/useLocation";
+
+type StatusVariant = "open" | "closed" | "progress";
+
+const getStatusInfo = (
+	status: ReportStatus
+): { text: string; variant: StatusVariant } => {
+	switch (status) {
+		case ReportStatus.Pending:
+			return { text: "Em Aberto", variant: "open" };
+		case ReportStatus.Resolved:
+			return { text: "Fechado", variant: "closed" };
+		case ReportStatus.InProgress:
+			return { text: "Andamento", variant: "progress" };
+		default:
+			return { text: "Desconhecido", variant: "progress" };
+	}
+};
 
 export const ListaRelatos = () => {
 	const navigate = useNavigate();
-	const demandas = [
-		{
-			id: 1,
-			titulo: "Semáforo queimado",
-			status: "Em Aberto",
-			data: "20/10/2025",
-		},
-		{
-			id: 2,
-			titulo: "Iluminação na Rua A",
-			status: "Fechado",
-			data: "21/10/2025",
-		},
-		{
-			id: 3,
-			titulo: "Buraco na rodovia",
-			status: "Andamento",
-			data: "20/10/2025",
-		},
-		{
-			id: 4,
-			titulo: "Placa de trânsito caiu",
-			status: "Fechado",
-			data: "20/10/2025",
-		},
-	];
+	const { reports, getReportsByCity, loading, error } = useReportStore();
+	const [filteredReports, setFilteredReports] = useState<Report[]>([]);
+	const { city } = useLocation();
+
+	useEffect(() => {
+		if (city) {
+			getReportsByCity(city);
+		}
+	}, [city, getReportsByCity]);
+
+	useEffect(() => {
+		setFilteredReports(reports);
+	}, [reports]);
+
+	const handleFilter = (status?: ReportStatus) => {
+		if (status === undefined) {
+			setFilteredReports(reports);
+		} else {
+			setFilteredReports(reports.filter((report) => report.status === status));
+		}
+	};
 
 	const handleRowClick = (id: number) => {
 		navigate(`/relato/${id}`);
@@ -40,43 +57,70 @@ export const ListaRelatos = () => {
 		<Container>
 			<LogoWrapper />
 
-			<Title>Relatos</Title>
+			<Title>Relatos {city ? `de ${city}` : null}</Title>
 			<LinkButton onClick={() => navigate(-1)} style={{ margin: "16px 0" }}>
 				← Voltar
 			</LinkButton>
 
 			<StatusButtons>
-				<StatusButton variant="open">Em Aberto</StatusButton>
-				<StatusButton variant="closed">Fechado</StatusButton>
-				<StatusButton variant="progress">Andamento</StatusButton>
+				<StatusButton
+					variant="all"
+					onClick={() => handleFilter()}
+					style={{ background: "#6B7280" }}>
+					Todos
+				</StatusButton>
+				<StatusButton
+					variant="open"
+					onClick={() => handleFilter(ReportStatus.Pending)}>
+					Em Aberto
+				</StatusButton>
+				<StatusButton
+					variant="closed"
+					onClick={() => handleFilter(ReportStatus.Resolved)}>
+					Fechado
+				</StatusButton>
+				<StatusButton
+					variant="progress"
+					onClick={() => handleFilter(ReportStatus.InProgress)}>
+					Andamento
+				</StatusButton>
 			</StatusButtons>
 
 			<Demands>
-				<table>
-					<thead>
-						<tr>
-							<th>Título</th>
-							<th>Status</th>
-							<th>Data</th>
-						</tr>
-					</thead>
-					<tbody>
-						{demandas.map((d) => (
-							<tr
-								key={d.id}
-								onClick={() => handleRowClick(d.id)}
-								style={{ cursor: "pointer" }}>
-								<td>{d.titulo}</td>
-								<td>
-									<StatusLabel variant={getStatusVariant(d.status)}>
-										{d.status}
-									</StatusLabel>
-								</td>
-								<td>{d.data}</td>
+				{loading ? (
+					<p>Carregando relatos...</p>
+				) : error ? (
+					<p style={{ color: "red" }}>{error}</p>
+				) : (
+					<table>
+						<thead>
+							<tr>
+								<th>Título</th>
+								<th>Status</th>
+								<th>Autor</th>
 							</tr>
-						))}
-					</tbody>
-				</table>
+						</thead>
+						<tbody>
+							{filteredReports.map((report) => {
+								const statusInfo = getStatusInfo(report.status);
+								return (
+									<tr
+										key={report.id}
+										onClick={() => handleRowClick(report.id)}
+										style={{ cursor: "pointer" }}>
+										<td>{report.title}</td>
+										<td>
+											<StatusLabel variant={statusInfo.variant}>
+												{statusInfo.text}
+											</StatusLabel>
+										</td>
+										<td>{report.user.firstName ?? "N/A"}</td>
+									</tr>
+								);
+							})}
+						</tbody>
+					</table>
+				)}
 			</Demands>
 		</Container>
 	);
@@ -94,9 +138,13 @@ const StatusButtons = styled.div`
 	display: flex;
 	justify-content: space-around;
 	margin: 10px 0;
+	flex-wrap: wrap;
+	gap: 8px;
 `;
 
-const StatusButton = styled.button<{ variant: "open" | "closed" | "progress" }>`
+const StatusButton = styled.button<{
+	variant: StatusVariant | "all";
+}>`
 	border: none;
 	padding: 6px 12px;
 	border-radius: 20px;
@@ -108,7 +156,9 @@ const StatusButton = styled.button<{ variant: "open" | "closed" | "progress" }>`
 			? "#3bb273"
 			: variant === "closed"
 			? "#c94c4c"
-			: "#2f5d8a"};
+			: variant === "progress"
+			? "#2f5d8a"
+			: "#6B7280"};
 `;
 
 const Demands = styled.div`
@@ -128,7 +178,7 @@ const Demands = styled.div`
 	}
 `;
 
-const StatusLabel = styled.span<{ variant: "open" | "closed" | "progress" }>`
+const StatusLabel = styled.span<{ variant: StatusVariant }>`
 	padding: 2px 8px;
 	border-radius: 12px;
 	color: white;
@@ -140,9 +190,3 @@ const StatusLabel = styled.span<{ variant: "open" | "closed" | "progress" }>`
 			? "#c94c4c"
 			: "#2f5d8a"};
 `;
-
-const getStatusVariant = (status: string) => {
-	if (status === "Em Aberto") return "open";
-	if (status === "Fechado") return "closed";
-	return "progress";
-};

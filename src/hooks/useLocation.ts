@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 export const useLocation = () => {
     const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -11,11 +12,11 @@ export const useLocation = () => {
               const { latitude, longitude } = position.coords;
               console.log("Latitude:", latitude, "Longitude:", longitude);
               try {
-                  const response = await fetch(
-                      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`
+                  const response = await axios.get(
+                      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
                     );
-                    const data = await response.json();
-                    const city = data.address?.city || data.address?.town || data.address?.village || "Cidade não encontrada";
+                    const data = response.data;
+                    const city = data.city || "Cidade não encontrada";
                     console.log("Cidade:", city);
                     setCity(city);
                     setLocation({ latitude, longitude });

@@ -39,3 +39,8 @@ export interface AuthResponseDto {
 	token: string;
 	user: User;
 }
+
+export interface ChangeUserPasswordDto {
+	currentPassword?: string;
+	newPassword?: string;
+}

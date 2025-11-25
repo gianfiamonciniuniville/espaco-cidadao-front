@@ -1,36 +1,22 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogoWrapper } from "../components/LogoWrapper";
 import styled from "styled-components";
 import { LinkButton } from "../components/global-styled";
+import { useReportStore } from "../stores/reportStore";
+import { useUserStore } from "../stores/userStore";
+import { ReportStatus } from "../types/report";
 
 export const ListaMeusRelatos = () => {
 	const navigate = useNavigate();
-	const demandas = [
-		{
-			id: 1,
-			titulo: "Semáforo queimado",
-			status: "Em Aberto",
-			data: "20/10/2025",
-		},
-		{
-			id: 2,
-			titulo: "Iluminação na Rua A",
-			status: "Fechado",
-			data: "21/10/2025",
-		},
-		{
-			id: 3,
-			titulo: "Buraco na rodovia",
-			status: "Andamento",
-			data: "20/10/2025",
-		},
-		{
-			id: 4,
-			titulo: "Placa de trânsito caiu",
-			status: "Fechado",
-			data: "20/10/2025",
-		},
-	];
+	const { reports, getReportsByUserId, loading, error } = useReportStore();
+	const { user } = useUserStore();
+
+	useEffect(() => {
+		if (user) {
+			getReportsByUserId(user.id);
+		}
+	}, [getReportsByUserId, user]);
 
 	const handleEdit = (id: number) => {
 		navigate(`/edicao-relato/${id}`);
@@ -38,6 +24,12 @@ export const ListaMeusRelatos = () => {
 
 	const handleOpen = (id: number) => {
 		navigate(`/relato/${id}`);
+	};
+
+	const getStatusVariant = (status: ReportStatus) => {
+		if (status === ReportStatus.Pending) return "open";
+		if (status === ReportStatus.Resolved) return "closed";
+		return "progress";
 	};
 
 	return (
@@ -56,36 +48,42 @@ export const ListaMeusRelatos = () => {
 			</StatusButtons>
 
 			<Demands>
-				<table>
-					<thead>
-						<tr>
-							<th>Título</th>
-							<th>Status</th>
-							<th>Data</th>
-							<th>Ação</th>
-						</tr>
-					</thead>
-					<tbody>
-						{demandas.map((d) => (
-							<tr key={d.id}>
-								<TitleReport onClick={() => handleOpen(d.id)}>
-									{d.titulo}
-								</TitleReport>
-								<td>
-									<StatusLabel variant={getStatusVariant(d.status)}>
-										{d.status}
-									</StatusLabel>
-								</td>
-								<td>{d.data}</td>
-								<td>
-									<EditButton onClick={() => handleEdit(d.id)}>
-										Editar
-									</EditButton>
-								</td>
+				{loading ? (
+					<p>Carregando...</p>
+				) : error ? (
+					<p>{error}</p>
+				) : (
+					<table>
+						<thead>
+							<tr>
+								<th>Título</th>
+								<th>Status</th>
+								<th>Data</th>
+								<th>Ação</th>
 							</tr>
-						))}
-					</tbody>
-				</table>
+						</thead>
+						<tbody>
+							{reports.map((d) => (
+								<tr key={d.id}>
+									<TitleReport onClick={() => handleOpen(d.id)}>
+										{d.title}
+									</TitleReport>
+									<td>
+										<StatusLabel variant={getStatusVariant(d.status)}>
+											{d.status}
+										</StatusLabel>
+									</td>
+									<td>{new Date(d.created).toLocaleDateString()}</td>
+									<td>
+										<EditButton onClick={() => handleEdit(d.id)}>
+											Editar
+										</EditButton>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				)}
 			</Demands>
 		</Container>
 	);
@@ -165,9 +163,3 @@ const EditButton = styled.button`
 	z-index: 1;
 	position: relative;
 `;
-
-const getStatusVariant = (status: string) => {
-	if (status === "Em Aberto") return "open";
-	if (status === "Fechado") return "closed";
-	return "progress";
-};
