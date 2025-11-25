@@ -112,7 +112,17 @@ export const Relato = () => {
 				/>
 			</Card>
 
-			<StyledTextarea rows={3} placeholder="Comente..." />
+			<Card>
+				{localStorage.getItem("token") || localStorage.getItem("userId") ? (
+					<StyledTextarea rows={3} placeholder="Comente..." />
+				) : (
+					<StyledTextarea
+						disabled
+						rows={3}
+						placeholder="Faça o log-in para comentar"
+					/>
+				)}
+			</Card>
 		</Container>
 	);
 };
@@ -195,7 +205,6 @@ const StyledTextarea = styled.textarea`
 	width: 100%;
 	border: 1px solid #ccc;
 	border-radius: 6px;
-	padding: 6px;
 	font-size: 0.85em;
 `;
 

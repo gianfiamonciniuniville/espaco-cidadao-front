@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../stores/userStore";
+import * as GlobalStyles from "../components/global-styled";
 
 export const Header = () => {
 	const navigate = useNavigate();
@@ -20,7 +21,11 @@ export const Header = () => {
 			</a>
 			{localStorage.getItem("token") || localStorage.getItem("userId") ? (
 				<LogoutButton onClick={handleLogout}>Sair</LogoutButton>
-			) : null}
+			) : (
+				<GlobalStyles.LinkButton onClick={() => navigate("/login")}>
+					Log-in
+				</GlobalStyles.LinkButton>
+			)}
 		</HeaderContainer>
 	);
 };
