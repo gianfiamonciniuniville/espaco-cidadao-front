@@ -2,9 +2,10 @@ import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import { LinkButton, Title } from "../components/global-styled";
 import { useReportStore } from "../stores/reportStore";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { ReportStatus } from "../types/report";
 import { Base64 } from "js-base64";
+import useEmblaCarousel from "embla-carousel-react";
 
 type StatusVariant = "open" | "closed" | "progress";
 
@@ -28,6 +29,7 @@ export const Relato = () => {
 	const navigate = useNavigate();
 	const { report, getReportById, photos, getReportPhotos, loading, error } =
 		useReportStore();
+	const [emblaRef, emblaApi] = useEmblaCarousel();
 
 	useEffect(() => {
 		if (id) {
@@ -35,6 +37,14 @@ export const Relato = () => {
 			getReportPhotos(Number(id));
 		}
 	}, [id, getReportById, getReportPhotos]);
+
+	const scrollPrev = useCallback(() => {
+		if (emblaApi) emblaApi.scrollPrev();
+	}, [emblaApi]);
+
+	const scrollNext = useCallback(() => {
+		if (emblaApi) emblaApi.scrollNext();
+	}, [emblaApi]);
 
 	if (loading) {
 		return <div>Carregando...</div>;
@@ -52,18 +62,33 @@ export const Relato = () => {
 
 	return (
 		<Container>
-			<Title>Detalhes do Relato {report.id}</Title>
+			<Title>Detalhes do Relato</Title>
 			<LinkButton onClick={() => navigate(-1)} style={{ margin: "16px 0" }}>
 				← Voltar
 			</LinkButton>
 
 			<Card>
 				{photos.length > 0 && (
-					<img
-						src={Base64.atob(photos[0].fileContents)}
-						alt={report.title}
-						style={{ width: "100%", borderRadius: "8px" }}
-					/>
+					<Embla>
+						<EmblaViewport ref={emblaRef}>
+							<EmblaContainer>
+								{photos.map((photo) => (
+									<EmblaSlide key={photo.fileContents}>
+										<CarouselImage
+											src={Base64.atob(photo.fileContents)}
+											alt={`${report.title}`}
+										/>
+									</EmblaSlide>
+								))}
+							</EmblaContainer>
+						</EmblaViewport>
+						{photos.length > 1 && (
+							<>
+								<PrevButton onClick={scrollPrev}>&#10094;</PrevButton>
+								<NextButton onClick={scrollNext}>&#10095;</NextButton>
+							</>
+						)}
+					</Embla>
 				)}
 				<h3>
 					Demanda{" "}
@@ -119,6 +144,51 @@ const Card = styled.div`
 		font-size: 0.85em;
 		color: #555;
 	}
+`;
+
+const Embla = styled.div`
+	position: relative;
+	margin-bottom: 10px;
+`;
+
+const EmblaViewport = styled.div`
+	overflow: hidden;
+`;
+
+const EmblaContainer = styled.div`
+	display: flex;
+`;
+
+const EmblaSlide = styled.div`
+	flex: 0 0 100%;
+	min-width: 0;
+`;
+
+const CarouselImage = styled.img`
+	width: 100%;
+	border-radius: 8px;
+	object-fit: cover;
+`;
+
+const CarouselButton = styled.button`
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	background-color: rgba(0, 0, 0, 0.5);
+	color: white;
+	border: none;
+	cursor: pointer;
+	border-radius: 50%;
+	user-select: none;
+	z-index: 1;
+`;
+
+const PrevButton = styled(CarouselButton)`
+	left: 10px;
+`;
+
+const NextButton = styled(CarouselButton)`
+	right: 10px;
 `;
 
 const StyledTextarea = styled.textarea`
