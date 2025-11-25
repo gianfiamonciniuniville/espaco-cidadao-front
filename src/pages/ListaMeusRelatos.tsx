@@ -12,7 +12,7 @@ import { SearchBar } from "../components/SearchBar";
 export const ListaMeusRelatos = () => {
 	const navigate = useNavigate();
 	const { reports, getReportsByUserId, loading, error } = useReportStore();
-	const { user } = useUserStore();
+	const { loggedIn, userId } = useUserStore();
 	const [filteredReports, setFilteredReports] = useState<Report[]>([]);
 	const [activeFilter, setActiveFilter] = useState<ReportStatus | undefined>(
 		undefined
@@ -20,10 +20,10 @@ export const ListaMeusRelatos = () => {
 	const [searchTerm, setSearchTerm] = useState("");
 
 	useEffect(() => {
-		if (user) {
-			getReportsByUserId(user.id);
+		if (loggedIn && userId) {
+			getReportsByUserId(Number(userId));
 		}
-	}, [getReportsByUserId, user]);
+	}, [getReportsByUserId, userId, loggedIn]);
 
 	useEffect(() => {
 		let result = reports;
