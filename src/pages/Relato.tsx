@@ -7,6 +7,17 @@ import { ReportStatus } from "../types/report";
 import { Base64 } from "js-base64";
 import useEmblaCarousel from "embla-carousel-react";
 import { useUserStore } from "../stores/userStore";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+// Fix for default marker icon in Leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+	iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+	iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+	shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+});
 
 type StatusVariant = "open" | "closed" | "progress";
 
@@ -107,11 +118,21 @@ export const Relato = () => {
 			<Card>
 				<h3>Localização</h3>
 				<p>"{report.localization}"</p>
-				<img
-					src={`https://via.placeholder.com/400x200.png?text=Mapa+de+${report.localization}`}
-					alt="Mapa"
-					style={{ width: "100%", borderRadius: "8px" }}
-				/>
+				{report.latitude && report.longitude ? (
+					<MapContainer
+						center={[report.latitude, report.longitude]}
+						zoom={13}
+						scrollWheelZoom={false}
+						style={{ height: "200px", width: "100%", borderRadius: "8px" }}>
+						<TileLayer
+							attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+							url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+						/>
+						<Marker position={[report.latitude, report.longitude]}></Marker>
+					</MapContainer>
+				) : (
+					<p>Localização não disponível no mapa.</p>
+				)}
 			</Card>
 
 			<Card>

@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { useReportStore } from "../stores/reportStore";
 import { useUserStore } from "../stores/userStore";
 import type { CreateReportDto } from "../types/report";
+import LocationPickerMap from "../components/LocationPickerMap";
 
 export const CadastroRelato: React.FC = () => {
 	const navigate = useNavigate();
@@ -15,6 +16,8 @@ export const CadastroRelato: React.FC = () => {
 		Title: "",
 		Description: "",
 		Localization: "",
+		Latitude: null,
+		Longitude: null,
 		Photos: [],
 	});
 
@@ -41,6 +44,19 @@ export const CadastroRelato: React.FC = () => {
 				Photos: e.target.files ? Array.from(e.target.files) : [],
 			}));
 		}
+	};
+
+	const handleLocationSelect = (
+		latitude: number,
+		longitude: number,
+		address: string
+	) => {
+		setFormData((prev) => ({
+			...prev,
+			Latitude: latitude,
+			Longitude: longitude,
+			Localization: address,
+		}));
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -96,16 +112,16 @@ export const CadastroRelato: React.FC = () => {
 					</Label>
 
 					<Label>
-						Localização
-						<Input
-							type="text"
-							name="Localization"
-							value={formData.Localization}
-							onChange={handleChange}
-							placeholder="Digite onde foi relatado"
-							required
-						/>
+						Selecione a Localização no Mapa
+						<LocationPickerMap onLocationSelect={handleLocationSelect} />
 					</Label>
+					{formData.Localization && (
+						<SelectedLocationText>
+							Localização Selecionada: {formData.Localization} (Lat:{" "}
+							{formData.Latitude?.toFixed(4)}, Lng:{" "}
+							{formData.Longitude?.toFixed(4)})
+						</SelectedLocationText>
+					)}
 
 					{error && <ErrorMessage>{error}</ErrorMessage>}
 
@@ -115,6 +131,8 @@ export const CadastroRelato: React.FC = () => {
 							!formData.Title ||
 							!formData.Description ||
 							!formData.Localization ||
+							!formData.Latitude ||
+							!formData.Longitude ||
 							loading
 						}
 						variant="filled">
@@ -182,4 +200,12 @@ const ErrorMessage = styled.p`
 	color: red;
 	font-size: 14px;
 	text-align: center;
+`;
+
+const SelectedLocationText = styled.p`
+	font-size: 0.9em;
+	color: #555;
+	margin-top: -10px;
+	margin-bottom: 10px;
+	padding-left: 5px;
 `;

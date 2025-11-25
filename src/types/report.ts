@@ -9,6 +9,9 @@ export enum ReportStatus {
 export interface UpdateReportDto {
 	title?: string;
 	description?: string;
+	localization?: string;
+	latitude?: number | null;
+	longitude?: number | null;
 	status?: ReportStatus;
 }
 
@@ -17,6 +20,8 @@ export interface CreateReportDto {
 	Title: string;
 	Description: string;
 	Localization: string;
+	Latitude: number | null;
+	Longitude: number | null;
 	Photos: File[];
 }
 
@@ -25,6 +30,8 @@ export interface Report {
 	title: string;
 	description: string;
 	localization: string;
+	latitude: number | null;
+	longitude: number | null;
 	status: ReportStatus;
 	user: UserShortDto;
 	photosCount: number;
