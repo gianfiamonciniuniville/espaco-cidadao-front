@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { LogoWrapper } from "../components/LogoWrapper";
 import { useNavigate } from "react-router-dom";
 import { LinkButton, Title } from "../components/global-styled";
 import { useReportStore } from "../stores/reportStore";
@@ -7,23 +6,7 @@ import { useEffect, useState } from "react";
 import type { Report } from "../types/report";
 import { ReportStatus } from "../types/report";
 import { useLocation } from "../hooks/useLocation";
-
-type StatusVariant = "open" | "closed" | "progress";
-
-const getStatusInfo = (
-	status: ReportStatus
-): { text: string; variant: StatusVariant } => {
-	switch (status) {
-		case ReportStatus.Pending:
-			return { text: "Em Aberto", variant: "open" };
-		case ReportStatus.Resolved:
-			return { text: "Fechado", variant: "closed" };
-		case ReportStatus.InProgress:
-			return { text: "Andamento", variant: "progress" };
-		default:
-			return { text: "Desconhecido", variant: "progress" };
-	}
-};
+import { ReportListItem } from "../components/ReportListItem";
 
 export const ListaRelatos = () => {
 	const navigate = useNavigate();
@@ -55,8 +38,6 @@ export const ListaRelatos = () => {
 
 	return (
 		<Container>
-			<LogoWrapper />
-
 			<Title>Relatos {city ? `de ${city}` : null}</Title>
 			<LinkButton onClick={() => navigate(-1)} style={{ margin: "16px 0" }}>
 				← Voltar
@@ -92,34 +73,15 @@ export const ListaRelatos = () => {
 				) : error ? (
 					<p style={{ color: "red" }}>{error}</p>
 				) : (
-					<table>
-						<thead>
-							<tr>
-								<th>Título</th>
-								<th>Status</th>
-								<th>Autor</th>
-							</tr>
-						</thead>
-						<tbody>
-							{filteredReports.map((report) => {
-								const statusInfo = getStatusInfo(report.status);
-								return (
-									<tr
-										key={report.id}
-										onClick={() => handleRowClick(report.id)}
-										style={{ cursor: "pointer" }}>
-										<td>{report.title}</td>
-										<td>
-											<StatusLabel variant={statusInfo.variant}>
-												{statusInfo.text}
-											</StatusLabel>
-										</td>
-										<td>{report.user.firstName ?? "N/A"}</td>
-									</tr>
-								);
-							})}
-						</tbody>
-					</table>
+					<div>
+						{filteredReports.map((report) => (
+							<ReportListItem
+								key={report.id}
+								report={report}
+								onClick={() => handleRowClick(report.id)}
+							/>
+						))}
+					</div>
 				)}
 			</Demands>
 		</Container>
@@ -143,7 +105,7 @@ const StatusButtons = styled.div`
 `;
 
 const StatusButton = styled.button<{
-	variant: StatusVariant | "all";
+	variant: "open" | "closed" | "progress" | "all";
 }>`
 	border: none;
 	padding: 6px 12px;
@@ -158,35 +120,11 @@ const StatusButton = styled.button<{
 			? "#c94c4c"
 			: variant === "progress"
 			? "#2f5d8a"
+			: variant === "all"
+			? "#6B7280"
 			: "#6B7280"};
 `;
 
 const Demands = styled.div`
 	margin-top: 10px;
-	table {
-		width: 100%;
-		border-collapse: collapse;
-	}
-	th,
-	td {
-		text-align: left;
-		padding: 6px;
-		font-size: 0.8em;
-	}
-	th {
-		color: #333;
-	}
-`;
-
-const StatusLabel = styled.span<{ variant: StatusVariant }>`
-	padding: 2px 8px;
-	border-radius: 12px;
-	color: white;
-	font-size: 0.75em;
-	background: ${({ variant }) =>
-		variant === "open"
-			? "#3bb273"
-			: variant === "closed"
-			? "#c94c4c"
-			: "#2f5d8a"};
 `;

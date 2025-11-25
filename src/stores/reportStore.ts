@@ -15,6 +15,7 @@ import type {
 	UpdateReportDto,
 	ReportPhoto,
 } from "../types/report";
+import { Base64 } from "js-base64";
 
 interface ReportState {
 	reports: Report[];

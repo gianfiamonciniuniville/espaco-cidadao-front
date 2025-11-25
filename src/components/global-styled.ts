@@ -3,7 +3,6 @@ import styled from "styled-components";
 export const Container = styled.div`
 	--bg: #f3f3f3;
 	background-color: var(--bg);
-	min-height: 100vh;
 	display: flex;
 	justify-content: center;
 	align-items: center;

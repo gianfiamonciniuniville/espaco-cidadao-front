@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { LogoWrapper } from "../components/LogoWrapper";
 import * as GlobalStyles from "../components/global-styled";
 import { useUserStore } from "../stores/userStore";
 
@@ -25,7 +24,6 @@ export const Login = () => {
 	return (
 		<GlobalStyles.Container>
 			<GlobalStyles.Card>
-				<LogoWrapper />
 				<GlobalStyles.Title>Login</GlobalStyles.Title>
 				<Form onSubmit={handleSubmit}>
 					<Label>
@@ -48,8 +46,11 @@ export const Login = () => {
 							required
 						/>
 					</Label>
-					{error && <ErrorMessage>{error}</ErrorMessage>} 
-					<GlobalStyles.Button type="submit" variant="filled" disabled={loading}>
+					{error && <ErrorMessage>{error}</ErrorMessage>}
+					<GlobalStyles.Button
+						type="submit"
+						variant="filled"
+						disabled={loading}>
 						{loading ? "Entrando..." : "Entrar"}
 					</GlobalStyles.Button>
 				</Form>

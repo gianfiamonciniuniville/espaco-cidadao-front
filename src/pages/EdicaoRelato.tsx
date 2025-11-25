@@ -59,8 +59,6 @@ export const EdicaoRelato: React.FC = () => {
 	return (
 		<GlobalStyles.Container>
 			<GlobalStyles.Card>
-				<LogoWrapper />
-
 				<GlobalStyles.Title>Edição de Relato</GlobalStyles.Title>
 
 				{loading && !report ? (

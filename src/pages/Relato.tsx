@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { LogoWrapper } from "../components/LogoWrapper";
 import { useNavigate, useParams } from "react-router-dom";
 import { LinkButton, Title } from "../components/global-styled";
 import { useReportStore } from "../stores/reportStore";
 import { useEffect } from "react";
 import { ReportStatus } from "../types/report";
+import { Base64 } from "js-base64";
 
 type StatusVariant = "open" | "closed" | "progress";
 
@@ -52,8 +52,6 @@ export const Relato = () => {
 
 	return (
 		<Container>
-			<LogoWrapper />
-
 			<Title>Detalhes do Relato {report.id}</Title>
 			<LinkButton onClick={() => navigate(-1)} style={{ margin: "16px 0" }}>
 				← Voltar
@@ -62,7 +60,7 @@ export const Relato = () => {
 			<Card>
 				{photos.length > 0 && (
 					<img
-						src={photos[0].url}
+						src={Base64.atob(photos[0].fileContents)}
 						alt={report.title}
 						style={{ width: "100%", borderRadius: "8px" }}
 					/>

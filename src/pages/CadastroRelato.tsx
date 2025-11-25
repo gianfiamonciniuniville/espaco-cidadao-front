@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { LogoWrapper } from "../components/LogoWrapper";
 import { useNavigate } from "react-router";
 import * as GlobalStyles from "../components/global-styled";
 import styled from "styled-components";
@@ -47,8 +46,6 @@ export const CadastroRelato: React.FC = () => {
 	return (
 		<GlobalStyles.Container>
 			<GlobalStyles.Card>
-				<LogoWrapper />
-
 				<GlobalStyles.Title>Novo Relato</GlobalStyles.Title>
 
 				<Form onSubmit={handleSubmit}>

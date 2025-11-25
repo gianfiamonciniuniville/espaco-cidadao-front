@@ -31,9 +31,12 @@ export const Home = () => {
 						variant="outline">
 						Ir para relatos {city ? `de ${city}` : null}
 					</GlobalStyles.Button>
-					<GlobalStyles.LinkButton onClick={() => navigate("/login")}>
-						Log-in
-					</GlobalStyles.LinkButton>
+					{!localStorage.getItem("token") &&
+						!localStorage.getItem("userId") && (
+							<GlobalStyles.LinkButton onClick={() => navigate("/login")}>
+								Log-in
+							</GlobalStyles.LinkButton>
+						)}
 				</div>
 			</GlobalStyles.Card>
 		</GlobalStyles.Container>

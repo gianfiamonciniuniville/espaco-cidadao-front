@@ -33,7 +33,5 @@ export interface Report {
 }
 
 export interface ReportPhoto {
-	id: number;
-	url: string;
-	reportId: number;
+	fileContents: string;
 }

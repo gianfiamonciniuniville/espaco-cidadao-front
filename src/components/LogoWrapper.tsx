@@ -1,22 +1,20 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const LogoWrapper = () => {
-    return (
-        <LogoWrap>
-          <LogoImage src="https://raw.githubusercontent.com/gianfiamonciniuniville/espaco-cidadao-front/refs/heads/master/src/assets/logo.png" alt="Espaço Cidadão" />
-        </LogoWrap>
-    );
-}
+	return (
+		<LogoWrap>
+			<LogoImage src="logo.png" alt="Espaço Cidadão" />
+		</LogoWrap>
+	);
+};
 
 const LogoWrap = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-height: 64px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 `;
 
 const LogoImage = styled.img`
-  width: 182px;
-  object-fit: contain;
+	width: 182px;
+	object-fit: contain;
 `;
