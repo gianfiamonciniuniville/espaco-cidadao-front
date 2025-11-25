@@ -17,6 +17,7 @@ interface UserState {
 	user: User | null;
 	token: string | null;
 	userId: string | null;
+	loggedIn: boolean;
 	loading: boolean;
 	error: string | null;
 
@@ -34,6 +35,9 @@ export const useUserStore = create<UserState>((set) => ({
 	user: null,
 	token: localStorage.getItem("token"),
 	userId: localStorage.getItem("userId"),
+	loggedIn: !!(
+		localStorage.getItem("token") && localStorage.getItem("userId")
+	),
 	loading: false,
 	error: null,
 
@@ -56,7 +60,7 @@ export const useUserStore = create<UserState>((set) => ({
 			const { token, user } = await loginUserApi(userData);
 			localStorage.setItem("token", token);
 			localStorage.setItem("userId", user.id.toString());
-			set({ token, user, loading: false });
+			set({ token, user, loggedIn: true, loading: false });
 		} catch (error: any) {
 			set({ loading: false, error: error.message || "Failed to login" });
 		}
@@ -87,6 +91,7 @@ export const useUserStore = create<UserState>((set) => ({
 
 	logout: () => {
 		localStorage.removeItem("token");
-		set({ user: null, token: null });
+		localStorage.removeItem("userId");
+		set({ user: null, token: null, userId: null, loggedIn: false });
 	},
 }));

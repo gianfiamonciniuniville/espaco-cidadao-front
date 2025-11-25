@@ -2,10 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from "../hooks/useLocation";
 import { Button, Card, Container, Title } from "../components/global-styled";
 import styled from "styled-components";
+import { useUserStore } from "../stores/userStore";
 
 export const Mapa = () => {
 	const { location, city } = useLocation();
 	const navigate = useNavigate();
+	const { loggedIn } = useUserStore();
 
 	return (
 		<Container>
@@ -31,9 +33,11 @@ export const Mapa = () => {
 					<Button variant="filled" onClick={() => navigate("/relatos")}>
 						Relatos da Cidade
 					</Button>
-					<Button variant="outline" onClick={() => navigate("/meus-relatos")}>
-						Meus Relatos
-					</Button>
+					{loggedIn && (
+						<Button variant="outline" onClick={() => navigate("/meus-relatos")}>
+							Meus Relatos
+						</Button>
+					)}
 					<Button variant="filled" onClick={() => navigate("/cadastro-relato")}>
 						Adicionar Novo Relato
 					</Button>

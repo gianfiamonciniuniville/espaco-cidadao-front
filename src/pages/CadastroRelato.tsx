@@ -1,20 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import * as GlobalStyles from "../components/global-styled";
 import styled from "styled-components";
 import { useReportStore } from "../stores/reportStore";
+import { useUserStore } from "../stores/userStore";
 import type { CreateReportDto } from "../types/report";
 
 export const CadastroRelato: React.FC = () => {
 	const navigate = useNavigate();
 	const { createReport, loading, error } = useReportStore();
+	const { userId, loggedIn } = useUserStore();
 	const [formData, setFormData] = useState<CreateReportDto>({
-		UserId: Number(localStorage.getItem("userId")) || 0,
+		UserId: Number(userId) || 0,
 		Title: "",
 		Description: "",
 		Localization: "",
 		Photos: [],
 	});
+
+	useEffect(() => {
+		if (!loggedIn) {
+			navigate("/login");
+		}
+	}, [loggedIn, navigate]);
 
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -42,6 +50,10 @@ export const CadastroRelato: React.FC = () => {
 			navigate("/meus-relatos");
 		}
 	};
+
+	if (!loggedIn) {
+		return null; // or a loading indicator
+	}
 
 	return (
 		<GlobalStyles.Container>

@@ -6,6 +6,7 @@ import { useEffect, useCallback } from "react";
 import { ReportStatus } from "../types/report";
 import { Base64 } from "js-base64";
 import useEmblaCarousel from "embla-carousel-react";
+import { useUserStore } from "../stores/userStore";
 
 type StatusVariant = "open" | "closed" | "progress";
 
@@ -29,6 +30,7 @@ export const Relato = () => {
 	const navigate = useNavigate();
 	const { report, getReportById, photos, getReportPhotos, loading, error } =
 		useReportStore();
+	const { loggedIn } = useUserStore();
 	const [emblaRef, emblaApi] = useEmblaCarousel();
 
 	useEffect(() => {
@@ -113,7 +115,7 @@ export const Relato = () => {
 			</Card>
 
 			<Card>
-				{localStorage.getItem("token") || localStorage.getItem("userId") ? (
+				{loggedIn ? (
 					<StyledTextarea rows={3} placeholder="Comente..." />
 				) : (
 					<StyledTextarea

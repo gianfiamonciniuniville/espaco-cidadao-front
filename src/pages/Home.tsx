@@ -3,10 +3,12 @@ import styled from "styled-components";
 import { LogoWrapper } from "../components/LogoWrapper";
 import { useLocation } from "../hooks/useLocation";
 import * as GlobalStyles from "../components/global-styled";
+import { useUserStore } from "../stores/userStore";
 
 export const Home = () => {
 	const navigate = useNavigate();
 	const { city } = useLocation();
+	const { loggedIn } = useUserStore();
 
 	return (
 		<GlobalStyles.Container>
@@ -22,7 +24,9 @@ export const Home = () => {
 
 				<div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 					<GlobalStyles.Button
-						onClick={() => navigate("/cadastro-relato")}
+						onClick={() =>
+							loggedIn ? navigate("/cadastro-relato") : navigate("/login")
+						}
 						variant="filled">
 						Começar a postar
 					</GlobalStyles.Button>
@@ -31,12 +35,11 @@ export const Home = () => {
 						variant="outline">
 						Ir para relatos {city ? `de ${city}` : null}
 					</GlobalStyles.Button>
-					{!localStorage.getItem("token") &&
-						!localStorage.getItem("userId") && (
-							<GlobalStyles.LinkButton onClick={() => navigate("/login")}>
-								Log-in
-							</GlobalStyles.LinkButton>
-						)}
+					{!loggedIn && (
+						<GlobalStyles.LinkButton onClick={() => navigate("/login")}>
+							Log-in
+						</GlobalStyles.LinkButton>
+					)}
 				</div>
 			</GlobalStyles.Card>
 		</GlobalStyles.Container>
