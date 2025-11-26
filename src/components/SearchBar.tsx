@@ -21,11 +21,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
 const Input = styled.input`
 	width: 100%;
-	padding: 10px;
+	padding: 8px;
 	border: 1px solid #ccc;
-	border-radius: 20px;
+	border-radius: 5px;
 	margin-bottom: 15px;
-	font-size: 1em;
+	margin-top: 15px;
+	font-size: 9pt;
 	box-sizing: border-box; /* Ensures padding doesn't affect width */
 
 	&:focus {

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { LinkButton, Title } from "../components/global-styled";
+import { LinkButton } from "../components/global-styled";
 import { useReportStore } from "../stores/reportStore";
 import { useEffect, useState } from "react";
 import type { Report } from "../types/report";
@@ -52,7 +52,7 @@ export const ListaRelatos = () => {
 	return (
 		<Container>
 			<LinkButton onClick={() => navigate(-1)}>← Voltar</LinkButton>
-			<Title>Relatos {city ? `de ${city}` : null}</Title>
+			<h2>Relatos {city ? `de ${city}` : null}</h2>
 
 			<SearchBar
 				onSearch={setSearchTerm}

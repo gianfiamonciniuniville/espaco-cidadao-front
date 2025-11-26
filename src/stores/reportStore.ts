@@ -14,8 +14,10 @@ import type {
 	CreateReportDto,
 	UpdateReportDto,
 	ReportPhoto,
-} from "../types/report";
+}
+ from "../types/report";
 import { Base64 } from "js-base64";
+import axios from "axios";
 
 interface ReportState {
 	reports: Report[];
@@ -45,8 +47,12 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			await createReportApi(reportData);
 			set({ loading: false });
-		} catch (error) {
-			set({ loading: false, error: "Failed to create report" + error });
+		} catch (error: any) {
+			if (axios.isAxiosError(error) && error.response?.data) {
+				set({ loading: false, error: error.response.data });
+			} else {
+				set({ loading: false, error: "Failed to create report: " + error.message });
+			}
 		}
 	},
 
@@ -55,8 +61,8 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			const reports = await getAllReportsApi();
 			set({ reports, loading: false });
-		} catch (error) {
-			set({ loading: false, error: "Failed to fetch reports" + error });
+		} catch (error: any) {
+			set({ loading: false, error: "Failed to fetch reports: " + error.message });
 		}
 	},
 
@@ -65,8 +71,8 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			const report = await getReportByIdApi(id);
 			set({ report, loading: false });
-		} catch (error) {
-			set({ loading: false, error: "Failed to fetch report" + error });
+		} catch (error: any) {
+			set({ loading: false, error: "Failed to fetch report: " + error.message });
 		}
 	},
 
@@ -75,8 +81,8 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			await updateReportApi(id, reportData);
 			set({ loading: false });
-		} catch (error) {
-			set({ loading: false, error: "Failed to update report" + error });
+		} catch (error: any) {
+			set({ loading: false, error: "Failed to update report: " + error.message });
 		}
 	},
 
@@ -85,8 +91,8 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			const reports = await getReportsByCityApi(city);
 			set({ reports, loading: false });
-		} catch (error) {
-			set({ loading: false, error: "Failed to fetch reports by city" + error });
+		} catch (error: any) {
+			set({ loading: false, error: "Failed to fetch reports by city: " + error.message });
 		}
 	},
 
@@ -95,8 +101,8 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			const reports = await getReportsByUserIdApi(userId);
 			set({ reports, loading: false });
-		} catch (error) {
-			set({ loading: false, error: "Failed to fetch reports by user" + error });
+		} catch (error: any) {
+			set({ loading: false, error: "Failed to fetch reports by user: " + error.message });
 		}
 	},
 
@@ -105,8 +111,8 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			const photos = await getReportPhotosApi(id);
 			set({ photos, loading: false });
-		} catch (error) {
-			set({ loading: false, error: "Failed to fetch report photos" + error });
+		} catch (error: any) {
+			set({ loading: false, error: "Failed to fetch report photos: " + error.message });
 		}
 	},
 }));
