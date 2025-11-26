@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import styled from "styled-components";
 import * as GlobalStyles from "../components/global-styled";
@@ -116,7 +117,6 @@ const CommentFormWrapper = styled.form`
 `;
 
 const StyledTextarea = styled.textarea`
-	width: 100%;
 	padding: 10px;
 	border: 1px solid #ccc;
 	border-radius: 6px;
@@ -148,7 +148,6 @@ const FileInput = styled.input`
 
 const FileInputLabel = styled.label`
 	display: block;
-	width: 100%;
 	padding: 8px 12px;
 	background-color: #f0f0f0;
 	border: 1px solid #ddd;
