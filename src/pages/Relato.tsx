@@ -10,6 +10,9 @@ import { useUserStore } from "../stores/userStore";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { CommentForm } from "../components/CommentForm";
+import { CommentListItem } from "../components/CommentListItem";
+import { useCommentStore } from "../stores/commentStore";
 
 // Fix for default marker icon in Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -42,14 +45,16 @@ export const Relato = () => {
 	const { report, getReportById, photos, getReportPhotos, loading, error } =
 		useReportStore();
 	const { loggedIn } = useUserStore();
+	const { comments, fetchComments } = useCommentStore();
 	const [emblaRef, emblaApi] = useEmblaCarousel();
 
 	useEffect(() => {
 		if (id) {
 			getReportById(Number(id));
 			getReportPhotos(Number(id));
+			fetchComments(Number(id));
 		}
-	}, [id, getReportById, getReportPhotos]);
+	}, [id, getReportById, getReportPhotos, fetchComments]);
 
 	const scrollPrev = useCallback(() => {
 		if (emblaApi) emblaApi.scrollPrev();
@@ -58,6 +63,12 @@ export const Relato = () => {
 	const scrollNext = useCallback(() => {
 		if (emblaApi) emblaApi.scrollNext();
 	}, [emblaApi]);
+
+	const handleCommentPosted = () => {
+		if (id) {
+			fetchComments(Number(id)); // Refresh comments after posting
+		}
+	};
 
 	if (loading) {
 		return <div>Carregando...</div>;
@@ -136,8 +147,12 @@ export const Relato = () => {
 			</Card>
 
 			<Card>
+				<h3>Comentários</h3>
 				{loggedIn ? (
-					<StyledTextarea rows={3} placeholder="Comente..." />
+					<CommentForm
+						reportId={Number(id)}
+						onCommentPosted={handleCommentPosted}
+					/>
 				) : (
 					<StyledTextarea
 						disabled
@@ -145,6 +160,16 @@ export const Relato = () => {
 						placeholder="Faça o log-in para comentar"
 					/>
 				)}
+
+				<CommentsList>
+					{comments.length > 0 ? (
+						comments.map((comment) => (
+							<CommentListItem key={comment.id} comment={comment} />
+						))
+					) : (
+						<p>Nenhum comentário ainda.</p>
+					)}
+				</CommentsList>
 			</Card>
 		</Container>
 	);
@@ -242,4 +267,11 @@ const StatusLabel = styled.span<{ variant: StatusVariant }>`
 			: variant === "closed"
 			? "#c94c4c"
 			: "#2f5d8a"};
+`;
+
+const CommentsList = styled.div`
+	margin-top: 20px;
+	max-height: 400px;
+	overflow-y: auto;
+	padding-right: 5px;
 `;
