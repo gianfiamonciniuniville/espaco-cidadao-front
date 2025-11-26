@@ -26,13 +26,13 @@ interface ReportState {
 	loading: boolean;
 	error: string | null;
 
-	createReport: (reportData: CreateReportDto) => Promise<void>;
-	getAllReports: () => Promise<void>;
-	getReportById: (id: number) => Promise<void>;
-	updateReport: (id: number, reportData: UpdateReportDto) => Promise<void>;
-	getReportsByCity: (city: string) => Promise<void>;
-	getReportsByUserId: (userId: number) => Promise<void>;
-	getReportPhotos: (id: number) => Promise<void>;
+	createReport: (reportData: CreateReportDto) => Promise<boolean>;
+	getAllReports: () => Promise<boolean>;
+	getReportById: (id: number) => Promise<boolean>;
+	updateReport: (id: number, reportData: UpdateReportDto) => Promise<boolean>;
+	getReportsByCity: (city: string) => Promise<boolean>;
+	getReportsByUserId: (userId: number) => Promise<boolean>;
+	getReportPhotos: (id: number) => Promise<boolean>;
 }
 
 export const useReportStore = create<ReportState>((set) => ({
@@ -47,12 +47,14 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			await createReportApi(reportData);
 			set({ loading: false });
+			return true;
 		} catch (error: any) {
-			if (axios.isAxiosError(error) && error.response?.data) {
-				set({ loading: false, error: error.response.data });
-			} else {
-				set({ loading: false, error: "Failed to create report: " + error.message });
+			let errorMessage = "Falha ao criar relato";
+			if (error.response && error.response.data) {
+				errorMessage = error.response.data.title;
 			}
+			set({ loading: false, error: errorMessage });
+			return false;
 		}
 	},
 
@@ -61,8 +63,14 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			const reports = await getAllReportsApi();
 			set({ reports, loading: false });
+			return true;
 		} catch (error: any) {
-			set({ loading: false, error: "Failed to fetch reports: " + error.message });
+			let errorMessage = "Falha ao buscar relatos";
+			if (error.response && error.response.data) {
+				errorMessage = error.response.data.title;
+			}
+			set({ loading: false, error: errorMessage });
+			return false;
 		}
 	},
 
@@ -71,8 +79,14 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			const report = await getReportByIdApi(id);
 			set({ report, loading: false });
+			return true;
 		} catch (error: any) {
-			set({ loading: false, error: "Failed to fetch report: " + error.message });
+			let errorMessage = "Falha ao buscar relato";
+			if (error.response && error.response.data) {
+				errorMessage = error.response.data.title;
+			}
+			set({ loading: false, error: errorMessage });
+			return false;
 		}
 	},
 
@@ -81,8 +95,14 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			await updateReportApi(id, reportData);
 			set({ loading: false });
+			return true;
 		} catch (error: any) {
-			set({ loading: false, error: "Failed to update report: " + error.message });
+			let errorMessage = "Falha ao atualizar relato";
+			if (error.response && error.response.data) {
+				errorMessage = error.response.data.title;
+			}
+			set({ loading: false, error: errorMessage });
+			return false;
 		}
 	},
 
@@ -91,8 +111,14 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			const reports = await getReportsByCityApi(city);
 			set({ reports, loading: false });
+			return true;
 		} catch (error: any) {
-			set({ loading: false, error: "Failed to fetch reports by city: " + error.message });
+			let errorMessage = "Falha ao buscar relatos por cidade";
+			if (error.response && error.response.data) {
+				errorMessage = error.response.data.title;
+			}
+			set({ loading: false, error: errorMessage });
+			return false;
 		}
 	},
 
@@ -101,8 +127,14 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			const reports = await getReportsByUserIdApi(userId);
 			set({ reports, loading: false });
+			return true;
 		} catch (error: any) {
-			set({ loading: false, error: "Failed to fetch reports by user: " + error.message });
+			let errorMessage = "Falha ao buscar relatos por usuário";
+			if (error.response && error.response.data) {
+				errorMessage = error.response.data.title;
+			}
+			set({ loading: false, error: errorMessage });
+			return false;
 		}
 	},
 
@@ -111,8 +143,14 @@ export const useReportStore = create<ReportState>((set) => ({
 		try {
 			const photos = await getReportPhotosApi(id);
 			set({ photos, loading: false });
+			return true;
 		} catch (error: any) {
-			set({ loading: false, error: "Failed to fetch report photos: " + error.message });
+			let errorMessage = "Falha ao buscar fotos do relato";
+			if (error.response && error.response.data) {
+				errorMessage = error.response.data.title;
+			}
+			set({ loading: false, error: errorMessage });
+			return false;
 		}
 	},
 }));

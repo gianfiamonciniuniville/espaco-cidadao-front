@@ -18,7 +18,10 @@ export const Login = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		await loginUser({ email, password });
+		const success = await loginUser({ email, password });
+		if (success) {
+			navigate("/mapa");
+		}
 	};
 
 	return (

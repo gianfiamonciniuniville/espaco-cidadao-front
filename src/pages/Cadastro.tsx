@@ -16,7 +16,7 @@ export const Cadastro = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		await registerUser({
+		const success = await registerUser({
 			firstName,
 			lastName,
 			document,
@@ -24,7 +24,7 @@ export const Cadastro = () => {
 			email,
 			password,
 		});
-		if (!error) {
+		if (success) {
 			navigate("/login");
 		}
 	};

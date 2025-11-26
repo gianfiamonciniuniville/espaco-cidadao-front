@@ -68,7 +68,7 @@ export const CadastroRelato: React.FC = () => {
 	};
 
 	if (!loggedIn) {
-		return null; // or a loading indicator
+		return null;
 	}
 
 	return (

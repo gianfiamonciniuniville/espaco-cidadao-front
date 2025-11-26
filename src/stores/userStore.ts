@@ -21,13 +21,13 @@ interface UserState {
 	loading: boolean;
 	error: string | null;
 
-	registerUser: (userData: RegisterUserDto) => Promise<void>;
-	loginUser: (userData: LoginUserDto) => Promise<void>;
+	registerUser: (userData: RegisterUserDto) => Promise<boolean>;
+	loginUser: (userData: LoginUserDto) => Promise<boolean>;
 	updateUserProfile: (
 		id: number,
 		userData: UpdateUserProfileDto
-	) => Promise<void>;
-	getUserById: (id: number) => Promise<void>;
+	) => Promise<boolean>;
+	getUserById: (id: number) => Promise<boolean>;
 	logout: () => void;
 }
 
@@ -35,9 +35,7 @@ export const useUserStore = create<UserState>((set) => ({
 	user: null,
 	token: localStorage.getItem("token"),
 	userId: localStorage.getItem("userId"),
-	loggedIn: !!(
-		localStorage.getItem("token") && localStorage.getItem("userId")
-	),
+	loggedIn: !!(localStorage.getItem("token") && localStorage.getItem("userId")),
 	loading: false,
 	error: null,
 
@@ -46,11 +44,17 @@ export const useUserStore = create<UserState>((set) => ({
 		try {
 			await registerUserApi(userData);
 			set({ loading: false });
+			return true;
 		} catch (error: any) {
+			let errorMessage = "Falha ao registrar usuário";
+			if (error.response && error.response.data) {
+				errorMessage = error.response.data.title;
+			}
 			set({
 				loading: false,
-				error: error.message || "Failed to register user",
+				error: errorMessage,
 			});
+			return false;
 		}
 	},
 
@@ -61,8 +65,16 @@ export const useUserStore = create<UserState>((set) => ({
 			localStorage.setItem("token", token);
 			localStorage.setItem("userId", user.id.toString());
 			set({ token, user, loggedIn: true, loading: false });
+			return true;
 		} catch (error: any) {
-			set({ loading: false, error: error.message || "Failed to login" });
+			let errorMessage = "Falha ao fazer login";
+			if (error.response && error.response.status === 400) {
+				errorMessage = "Credenciais inválidas";
+			} else if (error.response && error.response.data) {
+				errorMessage = error.response.data.title;
+			}
+			set({ loading: false, error: errorMessage });
+			return false;
 		}
 	},
 
@@ -71,11 +83,17 @@ export const useUserStore = create<UserState>((set) => ({
 		try {
 			const user = await updateUserProfileApi(id, userData);
 			set({ user, loading: false });
+			return true;
 		} catch (error: any) {
+			let errorMessage = "Falha ao atualizar o perfil do usuário";
+			if (error.response && error.response.data) {
+				errorMessage = error.response.data.title;
+			}
 			set({
 				loading: false,
-				error: error.message || "Failed to update user profile",
+				error: errorMessage,
 			});
+			return false;
 		}
 	},
 
@@ -84,8 +102,14 @@ export const useUserStore = create<UserState>((set) => ({
 		try {
 			const user = await getUserByIdApi(id);
 			set({ user, loading: false });
+			return true;
 		} catch (error: any) {
-			set({ loading: false, error: error.message || "Failed to fetch user" });
+			let errorMessage = "Falha ao buscar usuário";
+			if (error.response && error.response.data) {
+				errorMessage = error.response.data.title;
+			}
+			set({ loading: false, error: errorMessage });
+			return false;
 		}
 	},
 

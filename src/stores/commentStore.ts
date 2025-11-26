@@ -13,8 +13,8 @@ interface CommentState {
 	loading: boolean;
 	error: string | null;
 
-	fetchComments: (reportId: number) => Promise<void>;
-	addComment: (commentData: CreateCommentDto) => Promise<void>;
+	fetchComments: (reportId: number) => Promise<boolean>;
+	addComment: (commentData: CreateCommentDto) => Promise<boolean>;
 }
 
 export const useCommentStore = create<CommentState>((set) => ({
@@ -27,11 +27,14 @@ export const useCommentStore = create<CommentState>((set) => ({
 		try {
 			const comments = await getCommentsByReportIdApi(reportId);
 			set({ comments, loading: false });
+			return true;
 		} catch (error: any) {
-			set({
-				loading: false,
-				error: "Failed to fetch comments: " + error.message,
-			});
+			let errorMessage = "Falha ao buscar comentários";
+			if (error.response && error.response.data) {
+				errorMessage = error.response.data.title;
+			}
+			set({ loading: false, error: errorMessage });
+			return false;
 		}
 	},
 
@@ -43,15 +46,14 @@ export const useCommentStore = create<CommentState>((set) => ({
 				comments: [newComment, ...state.comments], // Add new comment to the beginning
 				loading: false,
 			}));
+			return true;
 		} catch (error: any) {
-			if (axios.isAxiosError(error) && error.response?.data) {
-				set({ loading: false, error: error.response.data });
-			} else {
-				set({
-					loading: false,
-					error: "Failed to add comment: " + error.message,
-				});
+			let errorMessage = "Falha ao adicionar comentário";
+			if (error.response && error.response.data) {
+				errorMessage = error.response.data.title;
 			}
+			set({ loading: false, error: errorMessage });
+			return false;
 		}
 	},
 }));

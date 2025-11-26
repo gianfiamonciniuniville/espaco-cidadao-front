@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import styled from "styled-components";
 import * as GlobalStyles from "../components/global-styled";
@@ -16,11 +15,10 @@ export const CommentForm: React.FC<CommentFormProps> = ({
 	onCommentPosted,
 }) => {
 	const { loggedIn, userId } = useUserStore();
-	const { addComment } = useCommentStore(); // Use addComment from the store
+	const { addComment, loading, error } = useCommentStore(); // Use addComment from the store
 	const [content, setContent] = useState("");
 	const [photos, setPhotos] = useState<File[]>([]);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [formError, setFormError] = useState<string | null>(null);
 
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files) {
@@ -30,18 +28,15 @@ export const CommentForm: React.FC<CommentFormProps> = ({
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setLoading(true);
-		setError(null);
+		setFormError(null);
 
 		if (!loggedIn || !userId) {
-			setError("Você precisa estar logado para comentar.");
-			setLoading(false);
+			setFormError("Você precisa estar logado para comentar.");
 			return;
 		}
 
 		if (!content.trim() && photos.length === 0) {
-			setError("O comentário não pode ser vazio ou sem imagens.");
-			setLoading(false);
+			setFormError("O comentário não pode ser vazio ou sem imagens.");
 			return;
 		}
 
@@ -52,15 +47,11 @@ export const CommentForm: React.FC<CommentFormProps> = ({
 			photos: photos,
 		};
 
-		try {
-			await addComment(newComment); // Call the addComment action from the store
+		const success = await addComment(newComment);
+		if (success) {
 			onCommentPosted();
 			setContent("");
 			setPhotos([]);
-		} catch (err: any) {
-			setError(err.message || "Erro ao postar comentário.");
-		} finally {
-			setLoading(false);
 		}
 	};
 
@@ -97,6 +88,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
 						: "Anexar Imagens"}
 				</FileInputLabel>
 			</FileInputContainer>
+			{formError && <ErrorMessage>{formError}</ErrorMessage>}
 			{error && <ErrorMessage>{error}</ErrorMessage>}
 			<GlobalStyles.Button type="submit" variant="filled" disabled={loading}>
 				{loading ? "Comentando..." : "Comentar"}

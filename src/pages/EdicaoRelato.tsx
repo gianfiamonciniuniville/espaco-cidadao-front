@@ -4,7 +4,6 @@ import styled from "styled-components";
 import * as GlobalStyles from "../components/global-styled";
 import { useReportStore } from "../stores/reportStore";
 import { ReportStatus, type UpdateReportDto } from "../types/report";
-import LocationPickerMap from "../components/LocationPickerMap"; // Import the new component
 
 export const EdicaoRelato: React.FC = () => {
 	const navigate = useNavigate();
@@ -15,9 +14,6 @@ export const EdicaoRelato: React.FC = () => {
 	const [formData, setFormData] = useState<UpdateReportDto>({
 		title: "",
 		description: "",
-		localization: "", // Add localization to formData
-		latitude: null, // Add latitude to formData
-		longitude: null, // Add longitude to formData
 		status: undefined,
 	});
 
@@ -32,9 +28,6 @@ export const EdicaoRelato: React.FC = () => {
 			setFormData({
 				title: report.title,
 				description: report.description,
-				localization: report.localization, // Populate localization
-				latitude: report.latitude, // Populate latitude
-				longitude: report.longitude, // Populate longitude
 				status: report.status,
 			});
 		}
@@ -49,19 +42,6 @@ export const EdicaoRelato: React.FC = () => {
 		setFormData((prev) => ({
 			...prev,
 			[name]: name === "status" ? Number(value) : value,
-		}));
-	};
-
-	const handleLocationSelect = (
-		latitude: number,
-		longitude: number,
-		address: string
-	) => {
-		setFormData((prev) => ({
-			...prev,
-			latitude: latitude,
-			longitude: longitude,
-			localization: address,
 		}));
 	};
 
@@ -102,22 +82,6 @@ export const EdicaoRelato: React.FC = () => {
 								onChange={handleChange}
 							/>
 						</Label>
-
-						<Label>
-							Localização
-							<LocationPickerMap
-								onLocationSelect={handleLocationSelect}
-								initialLatitude={formData.latitude}
-								initialLongitude={formData.longitude}
-							/>
-						</Label>
-						{formData.localization && (
-							<SelectedLocationText>
-								Localização Selecionada: {formData.localization} (Lat:{" "}
-								{formData.latitude?.toFixed(4)}, Lng:{" "}
-								{formData.longitude?.toFixed(4)})
-							</SelectedLocationText>
-						)}
 
 						<Label>
 							Status
@@ -216,12 +180,4 @@ const ErrorMessage = styled.p`
 	color: red;
 	font-size: 14px;
 	text-align: center;
-`;
-
-const SelectedLocationText = styled.p`
-	font-size: 0.9em;
-	color: #555;
-	margin-top: -10px;
-	margin-bottom: 10px;
-	padding-left: 5px;
 `;
