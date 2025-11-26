@@ -7,7 +7,6 @@ import { useUserStore } from "../stores/userStore";
 export const Cadastro = () => {
 	const navigate = useNavigate();
 	const { registerUser, loading, error } = useUserStore();
-	const [username, setUsername] = useState("");
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
 	const [document, setDocument] = useState("");
@@ -18,7 +17,6 @@ export const Cadastro = () => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		await registerUser({
-			username,
 			firstName,
 			lastName,
 			document,
@@ -36,16 +34,6 @@ export const Cadastro = () => {
 			<GlobalStyles.Card>
 				<GlobalStyles.Title>Cadastro</GlobalStyles.Title>
 				<Form onSubmit={handleSubmit}>
-					<Label>
-						Username
-						<Input
-							type="text"
-							value={username}
-							onChange={(e) => setUsername(e.target.value)}
-							placeholder="Username"
-							required
-						/>
-					</Label>
 					<Label>
 						Nome
 						<Input
